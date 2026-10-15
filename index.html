@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitab Rongawi — Perpustakaan & Rekomendasi Buku Digital</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf8f6',
+                            100: '#f2e8e5',
+                            200: '#eaddd7',
+                            300: '#e0cec7',
+                            400: '#d2bab0',
+                            500: '#bfa094',
+                            600: '#a38275',
+                            700: '#87695d',
+                            800: '#6c5349',
+                            900: '#523d35',
+                            950: '#382822',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .reader-font-serif { font-family: 'Merriweather', serif; }
+        .reader-font-sans { font-family: 'Inter', sans-serif; }
+        .reader-font-mono { font-family: monospace; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.7); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header & Navigation Bar -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            
+            <!-- Logo Kitab Rongawi -->
+            <div class="flex items-center space-x-3 cursor-pointer shrink-0" onclick="switchTab('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-600/30">
+                    <i class="fa-solid fa-book-open-reader text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">Kitab Rongawi</span>
+                    <span class="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-medium">Digital Library & Hub</span>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-1">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/30">Beranda</button>
+                <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Katalog Buku</button>
+                <button onclick="switchTab('shelf')" id="nav-shelf" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Rak Saya</button>
+                <button onclick="switchTab('recommendations')" id="nav-recommendations" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Rekomendasi AI</button>
+                <button onclick="switchTab('sources')" id="nav-sources" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Sumber Digital</button>
+            </nav>
+
+            <!-- Search Bar & Controls -->
+            <div class="flex items-center space-x-2">
+                <div class="relative hidden sm:block w-48 md:w-60">
+                    <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    <input type="text" oninput="handleHeaderSearch(this.value)" placeholder="Cari buku atau penulis..." class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border-none text-xs focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                
+                <button onclick="openSearchModal()" class="sm:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-search text-base"></i>
+                </button>
+
+                <!-- Toggle Dark Mode Button -->
+                <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors" title="Ganti Mode Gelap/Terang">
+                    <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Navigation -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 space-y-1">
+            <button onclick="switchTab('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Beranda</button>
+            <button onclick="switchTab('catalog'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Katalog Buku</button>
+            <button onclick="switchTab('shelf'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Rak Saya</button>
+            <button onclick="switchTab('recommendations'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Rekomendasi AI / Mood</button>
+            <button onclick="switchTab('sources'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Sumber Digital</button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+
+        <!-- ================= TAB 1: BERANDA (HOME) ================= -->
+        <section id="tab-home" class="tab-content">
+            <!-- Hero Section -->
+            <div class="relative overflow-hidden bg-gradient-to-b from-amber-900/10 via-amber-900/5 to-transparent dark:from-amber-950/40 py-16 lg:py-24 border-b border-slate-200 dark:border-slate-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                            <span class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs font-semibold uppercase tracking-wider">
+                                <i class="fa-solid fa-sparkles"></i> <span>Perpustakaan Digital Terlengkap</span>
+                            </span>
+                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                                Selamat Datang di <span class="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">Kitab Rongawi</span>
+                            </h1>
+                            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                                Temukan karya klasik nusantara, manuskrip bersejarah, literatur dunia, dan modul sains terpercaya. Baca sampel interaktif langsung atau jelajahi sumber hukum digital di internet.
+                            </p>
+                            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                                <button onclick="switchTab('catalog')" class="px-6 py-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold shadow-lg shadow-amber-600/30 transition-all transform hover:-translate-y-0.5">
+                                    <i class="fa-solid fa-compass mr-2"></i> Jelajahi Katalog Buku
+                                </button>
+                                <button onclick="openReader(1)" class="px-6 py-3.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold transition-all">
+                                    <i class="fa-solid fa-book-open mr-2 text-amber-600"></i> Baca Utuh Sekarang
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Hero Book Highlight -->
+                        <div class="lg:col-span-5 flex justify-center">
+                            <div class="relative w-72 sm:w-80 h-[420px] rounded-2xl bg-gradient-to-br from-amber-900 to-slate-900 p-6 shadow-2xl border border-amber-500/30 flex flex-col justify-between transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                                <div class="absolute -top-3 -right-3 bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                                    Unggulan 🌟
+                                </div>
+                                <div>
+                                    <span class="text-xs uppercase tracking-widest text-amber-400 font-semibold">Sastra & Klasik Nusantara</span>
+                                    <h3 class="text-2xl font-serif font-bold text-white mt-2">Serat Centhini</h3>
+                                    <p class="text-xs text-slate-300 mt-1">Ranggawarsita & Tim Pujangga Surakarta</p>
+                                </div>
+                                <div class="my-auto py-4 text-center">
+                                    <div class="w-28 h-40 mx-auto rounded-lg shadow-xl bg-amber-950/80 border border-amber-500/40 flex items-center justify-center p-3 text-center text-amber-100 font-serif text-xs italic leading-relaxed">
+                                        "Koleksi Pengetahuan Budi Pekerti & Kebudayaan Jawa"
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between text-xs text-slate-300">
+                                        <span>Rating: 4.9/5.0</span>
+                                        <span class="text-amber-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                                    </div>
+                                    <button onclick="openBookDetail(1)" class="w-full py-2.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-medium text-sm transition-colors shadow">
+                                        Lihat & Baca Detail
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fast Category Explorer -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Kategori Utama</h2>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">Pilih bidang ilmu yang ingin Anda dalami hari ini.</p>
+                    </div>
+                    <button onclick="switchTab('catalog')" class="mt-4 md:mt-0 text-amber-600 dark:text-amber-400 hover:underline font-semibold text-sm flex items-center space-x-1">
+                        <span>Lihat Semua Kategori</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+
+                <div id="home-categories-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- Featured Books Carousel / Grid -->
+            <div class="bg-slate-100 dark:bg-slate-900/50 py-16 border-y border-slate-200 dark:border-slate-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                        <div>
+                            <span class="text-amber-600 dark:text-amber-500 text-xs font-bold uppercase tracking-wider">Koleksi Pilihan</span>
+                            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Buku Terpopuler di Kitab Rongawi</h2>
+                        </div>
+                        <button onclick="switchTab('catalog')" class="mt-4 md:mt-0 text-amber-600 dark:text-amber-400 hover:underline font-semibold text-sm">
+                            Buka Katalog Lengkap →
+                        </button>
+                    </div>
+
+                    <div id="featured-books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: KATALOG BUKU ================= -->
+        <section id="tab-catalog" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8 space-y-4">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight">Katalog Buku Terlengkap</h1>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">Cari, filter, dan temukan ribuan bahan bacaan pilihan di Kitab Rongawi.</p>
+                </div>
+
+                <!-- Filters & Search Bar -->
+                <div class="flex flex-col lg:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="relative w-full lg:w-96">
+                        <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="text" id="catalog-search-input" oninput="filterCatalog()" placeholder="Cari berdasarkan judul atau penulis..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                        <select id="catalog-category-filter" onchange="filterCatalog()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm border-none focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium text-slate-700 dark:text-slate-200">
+                            <option value="all">Semua Kategori</option>
+                            <option value="Filsafat & Pemikiran">Filsafat & Pemikiran</option>
+                            <option value="Sejarah & Peradaban">Sejarah & Peradaban</option>
+                            <option value="Sains & Teknologi">Sains & Teknologi</option>
+                            <option value="Sastra & Klasik">Sastra & Klasik</option>
+                            <option value="Ekonomi & Sosial">Ekonomi & Sosial</option>
+                        </select>
+
+                        <select id="catalog-sort" onchange="filterCatalog()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm border-none focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium text-slate-700 dark:text-slate-200">
+                            <option value="popular">Terpopuler</option>
+                            <option value="rating">Rating Tertinggi</option>
+                            <option value="newest">Terbaru Ditambahkan</option>
+                            <option value="title">Judul (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catalog Books Grid -->
+            <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Empty Search State -->
+            <div id="catalog-empty" class="hidden text-center py-20 space-y-4">
+                <div class="w-16 h-16 mx-auto rounded-full bg-amber-100 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <h3 class="text-xl font-bold">Buku Tidak Ditemukan</h3>
+                <p class="text-slate-500 text-sm max-w-md mx-auto">Coba gunakan kata kunci lain atau pilih kategori yang berbeda pada filter di atas.</p>
+                <button onclick="resetCatalogFilter()" class="px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium">Reset Filter</button>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: RAK SAYA (MY SHELF) ================= -->
+        <section id="tab-shelf" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold tracking-tight">Rak Buku Saya</h1>
+                <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">Daftar buku yang disimpan, favorit pribadi, dan status bacaan Anda (tersimpan secara lokal).</p>
+            </div>
+
+            <!-- Sub Navigation Tabs -->
+            <div class="flex border-b border-slate-200 dark:border-slate-800 space-x-6 mb-8 overflow-x-auto">
+                <button onclick="switchShelfFilter('all')" id="shelf-btn-all" class="shelf-sub-btn pb-3 text-sm font-semibold text-amber-600 dark:text-amber-500 border-b-2 border-amber-600 whitespace-nowrap">Semua Tersimpan</button>
+                <button onclick="switchShelfFilter('reading')" id="shelf-btn-reading" class="shelf-sub-btn pb-3 text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap">Sedang Dibaca 📖</button>
+                <button onclick="switchShelfFilter('completed')" id="shelf-btn-completed" class="shelf-sub-btn pb-3 text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap">Selesai Dibaca ✅</button>
+                <button onclick="switchShelfFilter('favorites')" id="shelf-btn-favorites" class="shelf-sub-btn pb-3 text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap">Favorit ⭐</button>
+            </div>
+
+            <!-- Shelf Cards Grid -->
+            <div id="shelf-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Shelf Empty State -->
+            <div id="shelf-empty" class="hidden text-center py-20 space-y-4">
+                <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-bookmark"></i>
+                </div>
+                <h3 class="text-xl font-bold">Rak Buku Masih Kosong</h3>
+                <p class="text-slate-500 text-sm max-w-md mx-auto">Anda belum menyimpan buku ke rak pribadi. Jelajahi katalog dan tekan ikon bookmark atau simpan ke rak.</p>
+                <button onclick="switchTab('catalog')" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium text-sm">
+                    Cari Buku di Katalog
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: REKOMENDASI AI / MOOD ================= -->
+        <section id="tab-recommendations" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8">
+                <div class="flex items-center space-x-2 text-amber-600 dark:text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Asisten Pintar Kitab Rongawi</span>
+                </div>
+                <h1 class="text-3xl font-bold tracking-tight">Rekomendasi Berdasarkan Suasana Hati / Mood</h1>
+                <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">Pilih apa yang ingin Anda rasakan atau pelajari, dan sistem akan merekomendasikan bacaan yang pas.</p>
+            </div>
+
+            <!-- Mood Selector Box -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm mb-12">
+                <h3 class="text-lg font-bold mb-4">Pilih Suasana Hati / Minat Utama Anda:</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <button onclick="selectMood('philosophical')" class="mood-btn p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500 text-left transition-all group">
+                        <div class="text-amber-600 dark:text-amber-400 text-2xl mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-brain"></i></div>
+                        <h4 class="font-semibold text-sm">Mencari Kebijaksanaan</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ingin merenungi arti hidup & filsafat Stoik/Nusantara.</p>
+                    </button>
+                    
+                    <button onclick="selectMood('historical')" class="mood-btn p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500 text-left transition-all group">
+                        <div class="text-amber-600 dark:text-amber-400 text-2xl mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-landmark"></i></div>
+                        <h4 class="font-semibold text-sm">Menelusuri Masa Lalu</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Tertarik dengan sejarah peradaban & kerajaan kuno.</p>
+                    </button>
+
+                    <button onclick="selectMood('scientific')" class="mood-btn p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500 text-left transition-all group">
+                        <div class="text-amber-600 dark:text-amber-400 text-2xl mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-atom"></i></div>
+                        <h4 class="font-semibold text-sm">Penasaran dengan Sains</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ingin memahami konsep alam semesta & teknologi.</p>
+                    </button>
+
+                    <button onclick="selectMood('relaxing')" class="mood-btn p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500 text-left transition-all group">
+                        <div class="text-amber-600 dark:text-amber-400 text-2xl mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-feather"></i></div>
+                        <h4 class="font-semibold text-sm">Santai & Cerita Rakyat</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Membaca kisah rakyat, fiksi ringan, dan sastra indah.</p>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <span id="mood-label" class="text-xs font-medium text-slate-500">Silakan klik salah satu mood di atas.</span>
+                    <button onclick="generateMoodRecommendations()" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium text-sm shadow-md transition-all">
+                        <i class="fa-solid fa-rotate mr-2"></i> Acak Rekomendasi
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mood Recommendations Results -->
+            <div>
+                <h3 class="text-xl font-bold mb-6">Hasil Rekomendasi Khusus Untuk Anda</h3>
+                <div id="mood-recommendations-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: SUMBER BUKU DIGITAL ================= -->
+        <section id="tab-sources" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold tracking-tight">Sumber Buku Digital Resmi & Legal</h1>
+                <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">Kitab Rongawi terhubung dengan penyedia literatur domain publik dan perpustakaan digital resmi di seluruh dunia.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                        <h3 class="text-lg font-bold">Internet Archive (Archive.org)</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Perpustakaan nirlaba jutaan buku gratis, film, perangkat lunak, musik, dan manuskrip sejarah kuno dunia.</p>
+                    </div>
+                    <a href="https://archive.org/details/books" target="_blank" class="mt-6 py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-600 hover:text-white transition-colors text-xs font-semibold flex items-center justify-between">
+                        <span>Akses Internet Archive</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                        <h3 class="text-lg font-bold">Project Gutenberg</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Perpustakaan digital berisi lebih dari 70.000 e-Book domain publik gratis, termasuk novel klasik dunia dan naskah sejarah.</p>
+                    </div>
+                    <a href="https://www.gutenberg.org" target="_blank" class="mt-6 py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-600 hover:text-white transition-colors text-xs font-semibold flex items-center justify-between">
+                        <span>Akses Project Gutenberg</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-brands fa-google"></i>
+                        </div>
+                        <h3 class="text-lg font-bold">Google Books</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Indeks buku digital terbesar di dunia dengan penelusuran teks lengkap, pratinjau halaman, dan rujukan ilmiah.</p>
+                    </div>
+                    <a href="https://books.google.com" target="_blank" class="mt-6 py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-600 hover:text-white transition-colors text-xs font-semibold flex items-center justify-between">
+                        <span>Akses Google Books</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="text-lg font-bold">Buku Kemdikbudristek (Kurikulum Merdeka)</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">Portal buku teks dan non-teks Kurikulum Merdeka gratis dari Kementerian Pendidikan dan Kebudayaan Republik Indonesia.</p>
+                    </div>
+                    <a href="https://buku.kemdikbud.go.id" target="_blank" class="mt-6 py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-600 hover:text-white transition-colors text-xs font-semibold flex items-center justify-between">
+                        <span>Akses Portal Kemdikbud</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= MODE BACA BUKU (INTERACTIVE READER VIEW) ================= -->
+    <div id="reader-view" class="fixed inset-0 z-50 bg-white dark:bg-slate-950 hidden flex flex-col transition-colors duration-300">
+        <!-- Reader Navigation Bar -->
+        <header class="h-16 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-8 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur">
+            <div class="flex items-center space-x-3 truncate">
+                <button onclick="closeReader()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300" title="Keluar Pembaca">
+                    <i class="fa-solid fa-arrow-left text-lg"></i>
+                </button>
+                <div class="truncate">
+                    <h2 id="reader-book-title" class="text-sm font-bold truncate">Judul Buku</h2>
+                    <p id="reader-book-author" class="text-xs text-slate-500 truncate">Penulis</p>
+                </div>
+            </div>
+
+            <!-- Customization Controls -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Font Family Toggle -->
+                <select id="reader-font-family" onchange="changeReaderFontFamily(this.value)" class="hidden sm:block text-xs bg-slate-100 dark:bg-slate-800 rounded-lg px-2.5 py-1.5 border-none font-medium">
+                    <option value="serif">Font Serif</option>
+                    <option value="sans">Font Sans</option>
+                    <option value="mono">Font Mono</option>
+                </select>
+
+                <!-- Font Size Adjuster -->
+                <div class="flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg text-xs font-medium">
+                    <button onclick="adjustReaderFontSize(-2)" class="px-1 hover:text-amber-600 font-bold">A-</button>
+                    <span id="reader-font-size-label">18px</span>
+                    <button onclick="adjustReaderFontSize(2)" class="px-1 hover:text-amber-600 font-bold">A+</button>
+                </div>
+
+                <!-- Theme Reader Toggle -->
+                <button onclick="toggleReaderTheme()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    <i id="reader-theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <!-- Action Source Link -->
+                <a id="reader-external-link" href="#" target="_blank" class="hidden md:flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow">
+                    <span>Sumber Asli</span> <i class="fa-solid fa-external-link-alt text-[10px]"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Reader Text Container -->
+        <div class="flex-grow overflow-y-auto px-4 sm:px-6 py-10 flex justify-center bg-slate-50 dark:bg-slate-950" id="reader-scroll-area">
+            <div id="reader-container" class="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-12 shadow-sm border border-slate-200 dark:border-slate-800 space-y-6 my-auto">
+                <div class="border-b border-slate-200 dark:border-slate-800 pb-4 flex justify-between items-center text-xs text-slate-500">
+                    <span id="reader-chapter-badge" class="font-bold text-amber-600 dark:text-amber-500 uppercase">BAB 1</span>
+                    <span id="reader-progress-label">Halaman 1 dari 5</span>
+                </div>
+
+                <h3 id="reader-chapter-title" class="text-2xl sm:text-3xl font-serif font-bold tracking-tight">Judul Bab</h3>
+
+                <div id="reader-text-body" class="reader-font-serif text-lg leading-relaxed text-slate-700 dark:text-slate-300 space-y-6">
+                    <!-- Text content injected dynamically -->
+                </div>
+
+                <!-- Chapter Navigation Footer -->
+                <div class="pt-8 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <button onclick="navigateChapter(-1)" id="prev-chapter-btn" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium flex items-center space-x-2">
+                        <i class="fa-solid fa-chevron-left text-[10px]"></i> <span>Bab Sebelumnya</span>
+                    </button>
+                    <button onclick="navigateChapter(1)" id="next-chapter-btn" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold flex items-center space-x-2 shadow">
+                        <span>Bab Selanjutnya</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= BOOK DETAIL MODAL ================= -->
+    <div id="book-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 relative my-8 animate-scaleUp">
+            <button onclick="closeBookModal()" class="absolute top-6 right-6 w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+
+            <div id="modal-content" class="space-y-6">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SEARCH MODAL ================= -->
+    <div id="search-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-start justify-center pt-20 p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="relative">
+                <i class="fa-solid fa-search absolute left-4 top-4 text-slate-400"></i>
+                <input type="text" id="quick-search-input" oninput="handleHeaderSearch(this.value)" placeholder="Ketik judul buku, penulis, atau kata kunci..." class="w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+            </div>
+            <div id="quick-search-results" class="max-h-80 overflow-y-auto space-y-2">
+                <p class="text-xs text-slate-400 text-center py-6">Mulai ketik untuk mencari koleksi Kitab Rongawi...</p>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeSearchModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-semibold">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 text-center md:text-left">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-book-open-reader text-sm"></i>
+                </div>
+                <span class="font-bold tracking-tight">Kitab Rongawi</span>
+                <span class="text-xs text-slate-400">© 2026</span>
+            </div>
+            <p class="text-xs text-slate-500 max-w-md">
+                Menghubungkan pembaca nusantara dengan literatur digital domain publik & sumber resmi tepercaya di internet.
+            </p>
+            <div class="flex space-x-4 text-slate-400 text-sm">
+                <a href="https://gutenberg.org" target="_blank" class="hover:text-amber-600 transition-colors">Gutenberg</a>
+                <a href="https://archive.org" target="_blank" class="hover:text-amber-600 transition-colors">Archive.org</a>
+                <a href="https://books.google.com" target="_blank" class="hover:text-amber-600 transition-colors">Google Books</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // MASTER DATABASE OF BOOKS
+        const booksData = [
+            {
+                id: 1,
+                title: "Serat Centhini: Jilid I",
+                author: "Ranggawarsita & Pujangga Surakarta",
+                category: "Sastra & Klasik",
+                rating: 4.9,
+                reviewsCount: 184,
+                coverBg: "from-amber-900 to-slate-950",
+                synopsis: "Mahakarya sastra Jawa klasik yang memuat pengetahuan mendalam tentang spiritualitas, kebudayaan, seni, adat istiadat, dan alam nusantara.",
+                publishedYear: 1814,
+                pages: 350,
+                sourceName: "Internet Archive & Wikisource",
+                externalLink: "https://archive.org/details/seratcenthini",
+                featured: true,
+                mood: "philosophical",
+                chapters: [
+                    { title: "Bab I: Wejangan Piwulang Budi Pekerti", text: "Mula buntoning wacana, amoring rasa lan panggalih, yogyakna manungsa ngudi kawruh sejati kang ora gampang luntur déning jaman. Para leluhur nilaraken warisan luhur awujud serat piwulang sing nuntun manungsa marang kasampurnan urip." },
+                    { title: "Bab II: Lelaku Batin lan Kesabaran", text: "Sabar narimo lila legawa minangka pathokan urip utama. Wong sing tansah eling lan waspodo bakal adoh saka sangsara donya. Kawruh ora mung diwaca, nanging dirasuk ing njero ati." },
+                    { title: "Bab III: Sasmita Alam Semesta", text: "Alam pratingkah minangka kitab suci kapindho. Kabeh lintang, samodra, lan gunung duwe sasmita utawa tanda-tanda kanggo wong sing gelem mikir lan niteni kahanan jagad raya iki." }
+                ]
+            },
+            {
+                id: 2,
+                title: "Meditasi Stoik & Kebijaksanaan Hidup",
+                author: "Marcus Aurelius (Terjemahan)",
+                category: "Filsafat & Pemikiran",
+                rating: 4.8,
+                reviewsCount: 420,
+                coverBg: "from-stone-800 to-amber-950",
+                synopsis: "Catatan refleksif Kaisar Romawi Marcus Aurelius tentang pengendalian diri, ketenangan batin, serta penerimaan atas dinamika kehidupan.",
+                publishedYear: 180,
+                pages: 240,
+                sourceName: "Project Gutenberg",
+                externalLink: "https://www.gutenberg.org/ebooks/2680",
+                featured: true,
+                mood: "philosophical",
+                chapters: [
+                    { title: "Bab I: Refleksi Pengendalian Diri", text: "Kamu memiliki kekuatan atas pikiranmu—bukan atas kejadian di luar. Sadarilah hal ini, dan kamu akan menemukan kekuatan sejati di dalam dirimu sendiri." },
+                    { title: "Bab II: Menyikapi Rintangan", text: "Rintangan untuk bertindak justru memajukan tindakan. Apa yang menghalangi jalan kini menjadi jalan itu sendiri." },
+                    { title: "Bab III: Ketenangan Batin", text: "Jangan biarkan masa depan mengganggumu. Kamu akan menghadapinya, jika perlu, dengan senjata alasan yang sama yang hari ini membentengimu dari masa kini." }
+                ]
+            },
+            {
+                id: 3,
+                title: "Sejarah Nusantara & Kerajaan Kuno",
+                author: "Prof. Dr. Slamet Muljana",
+                category: "Sejarah & Peradaban",
+                rating: 4.9,
+                reviewsCount: 290,
+                coverBg: "from-amber-950 to-orange-950",
+                synopsis: "Kajian sejarah mendalam mengenai kejayaan Sriwijaya, Majapahit, dan dinamika jaringan perdagangan rempah maritim di Nusantara.",
+                publishedYear: 1979,
+                pages: 410,
+                sourceName: "Internet Archive",
+                externalLink: "https://archive.org",
+                featured: true,
+                mood: "historical",
+                chapters: [
+                    { title: "Bab I: Jalur Rempah Maritim", text: "Kepulauan Nusantara sejak ribuan tahun lalu menjadi titik temu para pelaut internasional membawa rempah-rempah bernilai tinggi." },
+                    { title: "Bab II: Kejayaan Sriwijaya", text: "Sriwijaya tumbuh sebagai imperium maritim yang menguasai Selat Malaka serta menjadi pusat studi kebudayaan dan keagamaan." },
+                    { title: "Bab III: Sumpah Palapa Majapahit", text: "Gajah Mada dan Hayam Wuruk membawa Majapahit mencapai puncak kemakmuran dan persatuan kawasan nusantara." }
+                ]
+            },
+            {
+                id: 4,
+                title: "Konsep Dasar Fisika & Alam Semesta",
+                author: "Tim Pendidikan Nasional",
+                category: "Sains & Teknologi",
+                rating: 4.7,
+                reviewsCount: 110,
+                coverBg: "from-blue-950 to-slate-900",
+                synopsis: "Modul sains interaktif yang membahas hukum-hukum fisika dasar, termodinamika, dan fenomena alam semesta secara sistematis.",
+                publishedYear: 2024,
+                pages: 280,
+                sourceName: "Buku Kemdikbudristek",
+                externalLink: "https://buku.kemdikbud.go.id",
+                featured: false,
+                mood: "scientific",
+                chapters: [
+                    { title: "Bab I: Kinematika & Gerak Benda", text: "Gerak adalah perubahan posisi suatu benda terhadap titik acuan tertentu dalam selang waktu tertentu." },
+                    { title: "Bab II: Hukum Newton tentang Gerak", text: "Hukum I Newton menyatakan kelembaman benda, sedangkan Hukum II merumuskan hubungan gaya, massa, dan percepatan." }
+                ]
+            },
+            {
+                id: 5,
+                title: "Dongeng & Legenda Rakyat Nusantara",
+                author: "Balai Pustaka",
+                category: "Sastra & Klasik",
+                rating: 4.6,
+                reviewsCount: 95,
+                coverBg: "from-emerald-950 to-slate-900",
+                synopsis: "Himpunan cerita rakyat dari berbagai wilayah di Indonesia yang sarat akan nilai moral, keteladanan, dan kearifan lokal.",
+                publishedYear: 1985,
+                pages: 190,
+                sourceName: "Project Gutenberg Open",
+                externalLink: "https://www.gutenberg.org",
+                featured: true,
+                mood: "relaxing",
+                chapters: [
+                    { title: "Bab I: Kisah Danau Toba", text: "Dahulu kala di tanah Sumatra, seorang pemuda menemukan keajaiban yang mengubah perjalanan hidupnya dan membentuk sejarah sebuah danau megah." },
+                    { title: "Bab II: Sangkuriang & Tangkuban Parahu", text: "Legenda Parahyangan tentang keteguhan, tantangan, dan terbentuknya pegunungan bersejarah." }
+                ]
+            },
+            {
+                id: 6,
+                title: "Ekonomi Kerakyatan & Koperasi",
+                author: "Dr. Mohammad Hatta",
+                category: "Ekonomi & Sosial",
+                rating: 4.8,
+                reviewsCount: 160,
+                coverBg: "from-teal-950 to-slate-900",
+                synopsis: "Gagasan founding father Indonesia Mohammad Hatta mengenai sistem ekonomi berbasis gotong royong dan keadilan sosial.",
+                publishedYear: 1954,
+                pages: 210,
+                sourceName: "Arsip Nasional RI",
+                externalLink: "https://archive.org",
+                featured: false,
+                mood: "philosophical",
+                chapters: [
+                    { title: "Bab I: Prinsip Gotong Royong", text: "Ekonomi yang kokoh berdiri di atas pilar kebersamaan dan pemerataan bagi seluruh lapisan masyarakat." },
+                    { title: "Bab II: Koperasi Fondasi Bangsa", text: "Koperasi bertindak sebagai wadah pemberdayaan ekonomi rakyat kecil secara mandiri." }
+                ]
+            }
+        ];
+
+        // APP STATE
+        let activeTab = 'home';
+        let isDarkMode = true;
+        let selectedMood = 'philosophical';
+
+        // Local Storage Shelf Data
+        let userShelf = JSON.parse(localStorage.getItem('kitab_rongawi_shelf')) || [
+            { bookId: 1, status: 'reading', favorite: true, note: 'Buku wajib untuk memahami sastra Jawa.' },
+            { bookId: 2, status: 'completed', favorite: font = true, note: 'Sangat menenangkan pikiran.' }
+        ];
+
+        // Reader View State
+        let currentReaderBook = null;
+        let currentChapterIndex = 0;
+        let readerFontSize = 18;
+        let readerFontFamily = 'serif';
+        let readerDarkMode = true;
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            renderHomeCategories();
+            renderFeaturedBooks();
+            renderCatalog();
+            renderShelf();
+            generateMoodRecommendations();
+        });
+
+        // THEME MANAGEMENT
+        function initTheme() {
+            const saved = localStorage.getItem('kitab_rongawi_theme');
+            if (saved === 'light') {
+                isDarkMode = false;
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-sun';
+            } else {
+                isDarkMode = true;
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-moon';
+            }
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-moon';
+                localStorage.setItem('kitab_rongawi_theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-sun';
+                localStorage.setItem('kitab_rongawi_theme', 'light');
+            }
+        }
+
+        // NAVIGATION TABS
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = 'nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
+            });
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.className = 'nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/30';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // HOME CATEGORIES RENDER
+        const homeCategories = [
+            { name: "Filsafat & Pemikiran", icon: "fa-brain", count: "120 Buku" },
+            { name: "Sejarah & Peradaban", icon: "fa-landmark", count: "180 Buku" },
+            { name: "Sains & Teknologi", icon: "fa-atom", count: "90 Modul" },
+            { name: "Sastra & Klasik", icon: "fa-book-tanakh", count: "210 Kitab" },
+            { name: "Ekonomi & Sosial", icon: "fa-scale-balanced", count: "105 Buku" }
+        ];
+
+        function renderHomeCategories() {
+            const container = document.getElementById('home-categories-grid');
+            container.innerHTML = homeCategories.map(cat => `
+                <div onclick="selectCategoryFilter('${cat.name}')" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 cursor-pointer transition-all text-center group shadow-sm">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid ${cat.icon}"></i>
+                    </div>
+                    <h3 class="font-semibold text-xs sm:text-sm truncate">${cat.name}</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">${cat.count}</p>
+                </div>
+            `).join('');
+        }
+
+        function selectCategoryFilter(catName) {
+            switchTab('catalog');
+            document.getElementById('catalog-category-filter').value = catName;
+            filterCatalog();
+        }
+
+        function renderFeaturedBooks() {
+            const container = document.getElementById('featured-books-grid');
+            const featured = booksData.filter(b => b.featured);
+            container.innerHTML = featured.map(b => createBookCardHTML(b)).join('');
+        }
+
+        // CATALOG LOGIC
+        function renderCatalog(books = booksData) {
+            const container = document.getElementById('catalog-grid');
+            const emptyState = document.getElementById('catalog-empty');
+
+            if (books.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+            container.innerHTML = books.map(b => createBookCardHTML(b)).join('');
+        }
+
+        function filterCatalog() {
+            const query = document.getElementById('catalog-search-input').value.toLowerCase();
+            const category = document.getElementById('catalog-category-filter').value;
+            const sort = document.getElementById('catalog-sort').value;
+
+            let result = booksData.filter(b => {
+                const matchesQuery = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
+                const matchesCategory = category === 'all' || b.category === category;
+                return matchesQuery && matchesCategory;
+            });
+
+            if (sort === 'popular') result.sort((a, b) => b.reviewsCount - a.reviewsCount);
+            else if (sort === 'rating') result.sort((a, b) => b.rating - a.rating);
+            else if (sort === 'newest') result.sort((a, b) => b.publishedYear - a.publishedYear);
+            else if (sort === 'title') result.sort((a, b) => a.title.localeCompare(b.title));
+
+            renderCatalog(result);
+        }
+
+        function resetCatalogFilter() {
+            document.getElementById('catalog-search-input').value = '';
+            document.getElementById('catalog-category-filter').value = 'all';
+            document.getElementById('catalog-sort').value = 'popular';
+            renderCatalog(booksData);
+        }
+
+        // BOOK CARD HTML GENERATOR
+        function createBookCardHTML(book) {
+            const shelfItem = userShelf.find(s => s.bookId === book.id);
+            const isFav = shelfItem ? shelfItem.favorite : false;
+
+            return `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="h-44 bg-gradient-to-br ${book.coverBg} p-5 relative flex flex-col justify-between text-white overflow-hidden">
+                            <div class="flex justify-between items-start z-10">
+                                <span class="px-2.5 py-0.5 rounded-full bg-black/30 backdrop-blur text-[10px] font-semibold tracking-wide uppercase">${book.category}</span>
+                                <button onclick="toggleFavorite(${book.id}, event)" class="w-8 h-8 rounded-full bg-black/30 backdrop-blur flex items-center justify-center text-xs transition-colors hover:bg-amber-600">
+                                    <i class="fa-${isFav ? 'solid' : 'regular'} fa-star text-amber-400"></i>
+                                </button>
+                            </div>
+                            <div class="z-10">
+                                <h4 class="font-serif font-bold text-base leading-snug line-clamp-2">${book.title}</h4>
+                                <p class="text-xs text-slate-300 mt-1 truncate">${book.author}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">${book.synopsis}</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                <span class="flex items-center space-x-1 text-amber-500 font-bold">
+                                    <i class="fa-solid fa-star"></i> <span>${book.rating}</span>
+                                </span>
+                                <span>${book.pages} Hal</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 grid grid-cols-2 gap-2">
+                        <button onclick="openBookDetail(${book.id})" class="py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-medium text-xs transition-colors">
+                            Detail
+                        </button>
+                        <button onclick="openReader(${book.id})" class="py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs shadow-sm transition-colors flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-book-open text-xs"></i> <span>Baca</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // RAK SAYA (MY SHELF) LOGIC
+        let currentShelfFilter = 'all';
+
+        function switchShelfFilter(filter) {
+            currentShelfFilter = filter;
+            document.querySelectorAll('.shelf-sub-btn').forEach(btn => {
+                btn.className = 'shelf-sub-btn pb-3 text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap';
+            });
+            document.getElementById(`shelf-btn-${filter}`).className = 'shelf-sub-btn pb-3 text-sm font-semibold text-amber-600 dark:text-amber-500 border-b-2 border-amber-600 whitespace-nowrap';
+            renderShelf();
+        }
+
+        function renderShelf() {
+            const container = document.getElementById('shelf-grid');
+            const emptyState = document.getElementById('shelf-empty');
+
+            let filtered = userShelf;
+            if (currentShelfFilter === 'reading') filtered = userShelf.filter(s => s.status === 'reading');
+            else if (currentShelfFilter === 'completed') filtered = userShelf.filter(s => s.status === 'completed');
+            else if (currentShelfFilter === 'favorites') filtered = userShelf.filter(s => s.favorite);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = filtered.map(item => {
+                const book = booksData.find(b => b.id === item.bookId);
+                return book ? `
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm p-5 space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <span class="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-bold text-[10px] uppercase">${book.category}</span>
+                                <span class="text-xs font-semibold ${item.status === 'completed' ? 'text-green-500' : 'text-amber-500'}">
+                                    ${item.status === 'completed' ? 'Selesai ✅' : 'Sedang Dibaca 📖'}
+                                </span>
+                            </div>
+                            <h4 class="font-serif font-bold text-base">${book.title}</h4>
+                            <p class="text-xs text-slate-500">Penulis: ${book.author}</p>
+                            
+                            <!-- User Short Note -->
+                            <div class="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl text-xs space-y-1">
+                                <span class="font-bold text-slate-400 block text-[10px]">CATATAN BACAAN:</span>
+                                <p class="text-slate-600 dark:text-slate-300 italic">${item.note || 'Belum ada catatan.'}</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 grid grid-cols-2 gap-2 border-t border-slate-100 dark:border-slate-800">
+                            <button onclick="removeFromShelf(${book.id})" class="py-2 px-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 font-medium text-xs">
+                                Hapus
+                            </button>
+                            <button onclick="openReader(${book.id})" class="py-2 px-2 rounded-xl bg-amber-600 text-white font-medium text-xs flex items-center justify-center space-x-1">
+                                <i class="fa-solid fa-book-open"></i> <span>Lanjut Baca</span>
+                            </button>
+                        </div>
+                    </div>
+                ` : '';
+            }).join('');
+        }
+
+        function toggleFavorite(bookId, event) {
+            if (event) event.stopPropagation();
+            let item = userShelf.find(s => s.bookId === bookId);
+            if (item) {
+                item.favorite = !item.favorite;
+            } else {
+                userShelf.push({ bookId: bookId, status: 'reading', favorite: true, note: 'Buku tersimpan dari katalog.' });
+            }
+            saveUserShelf();
+            renderCatalog();
+            renderFeaturedBooks();
+            renderShelf();
+        }
+
+        function removeFromShelf(bookId) {
+            userShelf = userShelf.filter(s => s.bookId !== bookId);
+            saveUserShelf();
+            renderShelf();
+        }
+
+        function saveUserShelf() {
+            localStorage.setItem('kitab_rongawi_shelf', JSON.stringify(userShelf));
+        }
+
+        // MOOD RECOMMENDATION SYSTEM
+        function selectMood(mood) {
+            selectedMood = mood;
+            const moodLabels = {
+                philosophical: "Rekomendasi Kebijaksanaan & Filsafat",
+                historical: "Rekomendasi Sejarah Peradaban Kuno",
+                scientific: "Rekomendasi Sains & Pengetahuan Alam",
+                relaxing: "Rekomendasi Dongeng & Sastra Santai"
+            };
+            document.getElementById('mood-label').textContent = moodLabels[mood];
+            generateMoodRecommendations();
+        }
+
+        function generateMoodRecommendations() {
+            const container = document.getElementById('mood-recommendations-grid');
+            let filtered = booksData.filter(b => b.mood === selectedMood);
+            if (filtered.length === 0) filtered = booksData;
+
+            container.innerHTML = filtered.map(b => createBookCardHTML(b)).join('');
+        }
+
+        // BOOK DETAIL MODAL
+        function openBookDetail(bookId) {
+            const book = booksData.find(b => b.id === bookId);
+            if (!book) return;
+
+            const shelfItem = userShelf.find(s => s.bookId === bookId);
+            const isSaved = !!shelfItem;
+
+            const modalContent = document.getElementById('modal-content');
+            modalContent.innerHTML = `
+                <div class="flex flex-col sm:flex-row gap-6 items-start">
+                    <div class="w-full sm:w-40 h-52 rounded-2xl bg-gradient-to-br ${book.coverBg} p-4 text-white flex flex-col justify-between shadow-lg shrink-0">
+                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-black/30 w-max">${book.category}</span>
+                        <div>
+                            <h4 class="font-serif font-bold text-sm leading-tight">${book.title}</h4>
+                            <p class="text-xs text-slate-300 mt-1">${book.author}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3 flex-grow">
+                        <span class="text-xs text-amber-600 dark:text-amber-500 font-bold uppercase tracking-wider">Tahun Terbit: ${book.publishedYear}</span>
+                        <h2 class="text-2xl font-bold font-serif">${book.title}</h2>
+                        <p class="text-xs text-slate-500">Penulis: <span class="font-semibold text-slate-700 dark:text-slate-300">${book.author}</span></p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${book.synopsis}</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 flex items-center justify-between text-xs">
+                    <div>
+                        <span class="font-semibold block text-slate-800 dark:text-slate-200">Sumber Publik Legal Internet:</span>
+                        <span class="text-amber-600 dark:text-amber-400 font-medium">${book.sourceName}</span>
+                    </div>
+                    <a href="${book.externalLink}" target="_blank" class="px-3 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-medium flex items-center space-x-1 shadow">
+                        <span>Akses Sumber Asli</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                    </a>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button onclick="toggleShelfModal(${book.id})" class="flex-grow py-3 rounded-xl border border-slate-300 dark:border-slate-700 font-medium text-xs transition-colors">
+                        <i class="fa-solid fa-bookmark mr-1"></i> ${isSaved ? 'Hapus dari Rak Saya' : 'Simpan ke Rak Saya'}
+                    </button>
+                    <button onclick="closeBookModal(); openReader(${book.id})" class="flex-grow py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs shadow-lg shadow-amber-600/30 transition-all">
+                        <i class="fa-solid fa-book-open mr-1"></i> Mulai Baca Langsung
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('book-modal').classList.remove('hidden');
+        }
+
+        function closeBookModal() {
+            document.getElementById('book-modal').classList.add('hidden');
+        }
+
+        function toggleShelfModal(bookId) {
+            const idx = userShelf.findIndex(s => s.bookId === bookId);
+            if (idx > -1) {
+                userShelf.splice(idx, 1);
+            } else {
+                userShelf.push({ bookId: bookId, status: 'reading', favorite: false, note: 'Buku ditambahkan ke rak.' });
+            }
+            saveUserShelf();
+            renderShelf();
+            closeBookModal();
+        }
+
+        // INTERACTIVE READER LOGIC
+        function openReader(bookId) {
+            const book = booksData.find(b => b.id === bookId);
+            if (!book) return;
+
+            currentReaderBook = book;
+            currentChapterIndex = 0;
+
+            document.getElementById('reader-book-title').textContent = book.title;
+            document.getElementById('reader-book-author').textContent = book.author;
+            document.getElementById('reader-external-link').href = book.externalLink;
+
+            renderReaderChapter();
+            document.getElementById('reader-view').classList.remove('hidden');
+        }
+
+        function closeReader() {
+            document.getElementById('reader-view').classList.add('hidden');
+        }
+
+        function renderReaderChapter() {
+            if (!currentReaderBook) return;
+            const chapter = currentReaderBook.chapters[currentChapterIndex];
+
+            document.getElementById('reader-chapter-badge').textContent = `BAB ${currentChapterIndex + 1}`;
+            document.getElementById('reader-progress-label').textContent = `Bab ${currentChapterIndex + 1} dari ${currentReaderBook.chapters.length}`;
+            document.getElementById('reader-chapter-title').textContent = chapter.title;
+            document.getElementById('reader-text-body').innerHTML = `<p>${chapter.text}</p>`;
+
+            document.getElementById('prev-chapter-btn').disabled = currentChapterIndex === 0;
+            document.getElementById('prev-chapter-btn').style.opacity = currentChapterIndex === 0 ? 0.4 : 1;
+
+            const isLast = currentChapterIndex === currentReaderBook.chapters.length - 1;
+            document.getElementById('next-chapter-btn').innerHTML = isLast ? '<span>Selesai Dibaca</span> ✅' : '<span>Bab Selanjutnya</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>';
+        }
+
+        function navigateChapter(direction) {
+            if (!currentReaderBook) return;
+            const target = currentChapterIndex + direction;
+            if (target >= 0 && target < currentReaderBook.chapters.length) {
+                currentChapterIndex = target;
+                renderReaderChapter();
+                document.getElementById('reader-scroll-area').scrollTop = 0;
+            } else if (target >= currentReaderBook.chapters.length) {
+                closeReader();
+            }
+        }
+
+        function adjustReaderFontSize(delta) {
+            readerFontSize = Math.max(14, Math.min(26, readerFontSize + delta));
+            document.getElementById('reader-text-body').style.fontSize = `${readerFontSize}px`;
+            document.getElementById('reader-font-size-label').textContent = `${readerFontSize}px`;
+        }
+
+        function changeReaderFontFamily(family) {
+            const body = document.getElementById('reader-text-body');
+            body.className = `reader-font-${family} text-lg leading-relaxed text-slate-700 dark:text-slate-300 space-y-6`;
+        }
+
+        function toggleReaderTheme() {
+            readerDarkMode = !readerDarkMode;
+            const view = document.getElementById('reader-view');
+            const container = document.getElementById('reader-container');
+
+            if (readerDarkMode) {
+                view.className = 'fixed inset-0 z-50 bg-slate-950 text-slate-100 hidden flex flex-col transition-colors duration-300';
+                container.className = 'w-full max-w-3xl bg-slate-900 rounded-2xl p-6 sm:p-12 shadow-sm border border-slate-800 space-y-6 my-auto';
+            } else {
+                view.className = 'fixed inset-0 z-50 bg-amber-50/60 text-slate-900 hidden flex flex-col transition-colors duration-300';
+                container.className = 'w-full max-w-3xl bg-[#fcf8f2] rounded-2xl p-6 sm:p-12 shadow-sm border border-amber-200/60 space-y-6 my-auto';
+            }
+        }
+
+        // QUICK SEARCH MODAL
+        function openSearchModal() {
+            document.getElementById('search-modal').classList.remove('hidden');
+        }
+
+        function closeSearchModal() {
+            document.getElementById('search-modal').classList.add('hidden');
+        }
+
+        function handleHeaderSearch(query) {
+            const results = document.getElementById('quick-search-results');
+            if (!query.trim()) {
+                results.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">Mulai ketik untuk mencari koleksi Kitab Rongawi...</p>';
+                return;
+            }
+
+            const q = query.toLowerCase();
+            const matches = booksData.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+
+            if (matches.length === 0) {
+                results.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">Tidak ditemukan buku yang cocok.</p>';
+                return;
+            }
+
+            results.innerHTML = matches.map(b => `
+                <div onclick="closeSearchModal(); openBookDetail(${b.id})" class="p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between transition-colors">
+                    <div>
+                        <h4 class="font-semibold text-sm">${b.title}</h4>
+                        <p class="text-xs text-slate-500">${b.author} • <span class="text-amber-600">${b.category}</span></p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
